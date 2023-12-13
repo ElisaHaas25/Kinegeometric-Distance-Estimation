@@ -5,6 +5,7 @@ import csv
 import ipywidgets as widgets
 from IPython.display import display
 from scipy.stats import norm
+from scipy.stats import multivariate_normal
 import scipy.integrate
 from scipy.special import gamma, factorial
 import matplotlib.pyplot as plt
