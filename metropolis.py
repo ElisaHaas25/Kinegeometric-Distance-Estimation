@@ -6,14 +6,15 @@
 # Nburnin : Number of Burn-In's
 # Nsamp: Samplenumber
 # sampleCov: Covariance of samples
-# returns a Nsamp * (2+Ntheta) array, where the columns are
+# returns a Nsamp * (1+Ntheta) array, where the columns are
 # 1:  log10 posterior PDF
 # 2+: Ntheta parameters
 
 import numpy as np
 
-def metrop(func,thetaInit,Nburnin,Nsamp,sampleCov,**kwargs):
+def metrop(func,thetaInit,Nburnin,Nsamp,sampleCov,seed,**kwargs):
     
+    np.random.seed(seed)
     if not np.isscalar(thetaInit): 
         Ntheta = len(thetaInit)
     else:
@@ -35,7 +36,7 @@ def metrop(func,thetaInit,Nburnin,Nsamp,sampleCov,**kwargs):
             thetaProp = np.random.multivariate_normal(mean=thetaCur, cov=sampleCov, size = 1)
             
         funcProp = func(thetaProp,**kwargs)
-        logMR = np.sum(funcProp) - np.sum(funcCur) 
+        logMR = funcProp - funcCur 
         
         if logMR >= 0 or logMR > np.log10(np.random.uniform(low=0, high=1, size=1)):
             thetaCur = thetaProp
