@@ -49,61 +49,32 @@ d.prior10 <- function(vel, velprior, log=FALSE) {
   }
 }
 
-############ Executable
 
-###### Setup
-
-# Example data
-p <- 6200 # HEALpixel level 5
-mydistance <- 2000 # pc
-
-# With the above values, velprior below should be (in km/s)
-#     vramean       vrasd    vdecmean      vdecsd         cor 
-# -63.4238974  53.8783667  -1.0596579  37.4170863  -0.2459645 
-
-# Path to velocity prior files (one per HEALpixel)
-velpriorfnamestem <- "./velocity_prior_fits/models/" 
-
-####### Compute
-#
-## Load velocity prior for HEALpixel number p (level 5)
-#tempEnv <- new.env()
-#velpriorfname <- paste(velpriorfnamestem, p, ".Robj", sep="")
-#if(!file.exists(velpriorfname)) {
-#  cat(p, "velocity prior model file", velpriorfname, "does not exist.\n")
-#  clean.end(writedistvelfile=FALSE)
-#}
-#load(velpriorfname, envir=tempEnv)
-#sfit <- tempEnv$sfit
-#
-## Evaluate velocity prior at specified distance mydistance (scalar, in pc)
-#velprior <- eval.sfit(sfit=sfit, r=mydistance)
-#
-## Print out model
-## Note that it provides a non-zero correlation in general, but this was
-## but this was then set to zero in paper VI for the inference.
-#print(velprior)
-
-#----------------------------------------------------------------------------------------------------------------------
 # Function which evaluates prior at given Healpixel p, distance r: 
 
 eval.prior.healpix <- function(p,r) {
+    
     tempEnv <- new.env()
-    velpriorfnamestem <- "./Rfiles/velocity_prior_fits/models/" 
+    
+    #velpriorfnamestem <- "/jupyter/ad/no233/linux/R/interactive_distance_estimation/Rfiles/velocity_prior_fits/models/" #velocity_prior_fits/models/" 
     # Load velocity prior for HEALpixel number p (level 5)
     
-    velpriorfname <- paste0(velpriorfnamestem, p, ".Robj") #, sep=""
-   if(!file.exists(velpriorfname)) {
-     cat(p, "velocity prior model file", velpriorfname, "does not exist.\n")
+    #velpriorfname <- paste0(velpriorfnamestem, p, ".Robj") #, sep=""
+   #if(!file.exists(velpriorfname)) {
+   #  cat(p, "velocity prior model file", velpriorfname, "does not exist.\n")
      #clean.end(writedistvelfile=FALSE)
-   }
-    load(velpriorfname, envir=tempEnv)
+   #}
+    #load(velpriorfname, envir=tempEnv)
+    
+    load(url(paste0("https://www.mpia.de/homes/calj/gedr3_distances_velocities/velocity_prior_fits/models/",p,".Robj")), envir=tempEnv)
+    
     sfit <- tempEnv$sfit
-    # Evaluate velocity prior at specified distance mydistance (scalar, in pc)
-    velprior <- eval.sfit(sfit=sfit, r=mydistance)
+    # Evaluate velocity prior at specified distance r (scalar, in pc)
+    velprior <- eval.sfit(sfit=sfit, r=r)
     
     #return  vramean, vrasd, vdecmean, vdecsd, cor 
     getwd()
     return(velprior)
     }
-
+    
+#
